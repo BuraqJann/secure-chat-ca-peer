@@ -1,0 +1,119 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:Client1Gui.ViewModels"
+        xmlns:conv="clr-namespace:Client1Gui.ViewModels"
+        x:Class="Client1Gui.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Width="1000" Height="650"
+        Title="Client1 Secure Chat"
+        mc:Ignorable="d">
+
+  <Window.Resources>
+    <conv:BooleanToAlignmentConverter x:Key="BoolToAlign"/>
+  </Window.Resources>
+
+  <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="320,*" Margin="14" RowSpacing="10" ColumnSpacing="12">
+
+    <!-- LEFT PANEL -->
+    <Border Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" CornerRadius="14" BorderThickness="1" Padding="14">
+      <StackPanel Spacing="10">
+
+        <TextBlock Text="Client1 Control Panel" FontSize="18" FontWeight="Bold"/>
+
+        <TextBlock Text="CA (Certificate Authority)" FontWeight="SemiBold" Margin="0,6,0,0"/>
+        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+          <TextBox Grid.Row="0" Grid.Column="0" Text="{Binding CaIp}" Watermark="CA IP (e.g. 10.0.0.10)"/>
+          <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding CaPort}" Watermark="CA Port (e.g. 5000)"/>
+        </Grid>
+
+        <TextBlock Text="Listen (Host)" FontWeight="SemiBold" Margin="0,8,0,0"/>
+        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+          <TextBox Grid.Row="0" Grid.Column="0" Text="{Binding ListenIp}" Watermark="Listen IP (Client1 IP)"/>
+          <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding ListenPort}" Watermark="Listen Port (e.g. 6000)"/>
+        </Grid>
+
+        <Button Content="Listen"
+                Command="{Binding ListenCommand}"
+                IsEnabled="{Binding !IsConnected}"
+                Margin="0,6,0,0"/>
+
+        <TextBlock Text="Connect (Client)" FontWeight="SemiBold" Margin="0,8,0,0"/>
+        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+          <TextBox Grid.Row="0" Grid.Column="0" Text="{Binding PeerIp}" Watermark="Peer IP (Client2 IP)"/>
+          <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding PeerPort}" Watermark="Peer Port (e.g. 6000)"/>
+        </Grid>
+
+        <Button Content="Connect"
+                Command="{Binding ConnectCommand}"
+                IsEnabled="{Binding !IsConnected}"
+                Margin="0,6,0,0"/>
+
+        <Button Content="Disconnect"
+                Command="{Binding DisconnectCommand}"
+                Margin="0,10,0,0"/>
+
+        <Border CornerRadius="10" BorderThickness="1" Padding="10" Margin="0,10,0,0">
+          <StackPanel Spacing="6">
+            <TextBlock Text="Status" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding Status}" TextWrapping="Wrap"/>
+          </StackPanel>
+        </Border>
+
+      </StackPanel>
+    </Border>
+
+    <!-- CHAT AREA -->
+    <Border Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" CornerRadius="14" BorderThickness="1" Padding="12">
+      <Grid RowDefinitions="Auto,*">
+
+        <DockPanel Grid.Row="0" LastChildFill="True" Margin="0,0,0,8">
+          <TextBlock Text="Encrypted Chat" FontSize="18" FontWeight="Bold" DockPanel.Dock="Left"/>
+          <TextBlock Text="{Binding Status}" DockPanel.Dock="Right" Opacity="0.7"/>
+        </DockPanel>
+
+        <ScrollViewer Grid.Row="1" Name="ChatScroll">
+          <ItemsControl ItemsSource="{Binding Messages}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:ChatMessage">
+                <Border CornerRadius="12"
+                        BorderThickness="1"
+                        Padding="10"
+                        Margin="0,0,0,10"
+                        HorizontalAlignment="{Binding IsMe, Converter={StaticResource BoolToAlign}}">
+                  <StackPanel>
+                    <DockPanel LastChildFill="True">
+                      <TextBlock Text="{Binding Sender}" FontWeight="Bold"/>
+                      <TextBlock Text="{Binding Time}" Opacity="0.6" DockPanel.Dock="Right"/>
+                    </DockPanel>
+                    <TextBlock Text="{Binding Text}" TextWrapping="Wrap" Margin="0,6,0,0"/>
+                  </StackPanel>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+
+      </Grid>
+    </Border>
+
+    <!-- INPUT BAR -->
+    <Border Grid.Row="2" Grid.Column="1" CornerRadius="14" BorderThickness="1" Padding="10">
+      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+        <TextBox Grid.Column="0"
+                 Text="{Binding MessageText}"
+                 Watermark="Type a message... (Enter=Send, Shift+Enter=New line)"
+                 AcceptsReturn="True"
+                 KeyUp="MessageBox_KeyUp"/>
+
+        <Button Grid.Column="1"
+                Content="Send"
+                Command="{Binding SendCommand}"
+                IsEnabled="{Binding IsConnected}"
+                Width="120"/>
+      </Grid>
+    </Border>
+
+  </Grid>
+</Window>

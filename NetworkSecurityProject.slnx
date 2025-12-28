@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="CAApp/CAApp.csproj" />
+  <Project Path="Client1App/Client1App.csproj" />
+  <Project Path="Client2App/Client2App.csproj" />
+  <Project Path="Shared/Shared.csproj" />
+</Solution>
