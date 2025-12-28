@@ -92,8 +92,6 @@ secure-chat-ca-peer/
 ├── .gitignore
 └── README.md
 
-yaml
-Copy code
 
 ---
 
